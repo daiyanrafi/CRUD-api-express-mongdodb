@@ -5,6 +5,41 @@ const todoSchema = require("../schemas/todoSchema");
 //model for using object mapping. object data model (ODM)
 const Todo = new mongoose.model("Todo", todoSchema);
 
+//get active todos using async-await (SAME THING 2 WAYS - ASYNC-AWAIT)
+router.get("/active", async (req, res) => {
+  const todo = new Todo();
+  const data = await todo.findActive();
+  res.status(200).json({
+    data: data,
+  });
+});
+
+//get active todos using callback (SAME THING 2 WAYS - CALLBACK)
+router.get("/active-callback", (req, res) => {
+  const todo = new Todo();
+  todo.findActiveCallback((err, data) => {
+    res.status(200).json({
+      data: data,
+    });
+  });
+});
+
+//get js object [static - method]
+router.get("/js", async (req, res) => {
+  const data = await Todo.findByJS();
+  res.status(200).json({
+    data,
+  });
+});
+
+//get todo language query helpers
+router.get("/language", async (req, res) => {
+  const data = await Todo.find().byLanguage("india");
+  res.status(200).json({
+    data,
+  });
+});
+
 //get all the todos
 router.get("/", (req, res) => {
   //   await Todo.find({ status: "active" }, (err, data) => {
