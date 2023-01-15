@@ -6,7 +6,7 @@ const todoSchema = require("../schemas/todoSchema");
 const Todo = new mongoose.model("Todo", todoSchema);
 
 //get all the todos
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
   //   await Todo.find({ status: "active" }, (err, data) => {
   //     if (err) {
   //       res.status(500).json({
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
   //       });
   //     }
   //   }).clone();
-  await Todo.find({ status: "active" })
+  Todo.find({ status: "active" })
     .select({
       _id: 0,
       _v: 0,
@@ -43,18 +43,29 @@ router.get("/", async (req, res) => {
 
 //get a todo by id
 router.get("/:id", async (req, res) => {
-  await Todo.find({ _id: req.params.id }, (err, data) => {
-    if (err) {
-      res.status(500).json({
-        error: "therea a server error bro!",
-      });
-    } else {
-      res.status(200).json({
-        result: data,
-        message: "todo Inserted wonderfully",
-      });
-    }
-  }).clone();
+  try {
+    const data = await Todo.find({ _id: req.params.id });
+    res.status(200).json({
+      result: data,
+      message: "todo Inserted wonderfully",
+    });
+  } catch {
+    res.status(500).json({
+      error: "therea a server error bro!",
+    });
+  }
+  // await Todo.find({ _id: req.params.id }, (err, data) => {
+  //   if (err) {
+  //     res.status(500).json({
+  //       error: "therea a server error bro!",
+  //     });
+  //   } else {
+  //     res.status(200).json({
+  //       result: data,
+  //       message: "todo Inserted wonderfully",
+  //     });
+  //   }
+  // }).clone();
 });
 
 //post todo
